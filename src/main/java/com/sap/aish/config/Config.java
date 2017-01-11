@@ -35,24 +35,8 @@ public class Config  {
 		String dbDriver;
 		
 		
-//		@Autowired
-//		DataSource dataSource;
-//		
 		private static final Log log = LogFactory.getLog(Config.class);
-		
-/*		@Bean
-		public DataSource dataSource(DataSourceProperties prop) {
-			log.warn("######   "+dbURL+" "+dbUser+" "+dbPassword);
-		
-			DataSource ds= prop.initializeDataSourceBuilder().driverClassName("com.mysql.jdbc.Driver").url(dbURL).username(dbUser).password(dbPassword).build();
-			System.out.println("####    "+ds);
-			return ds;
-			
-		}
-*/
-		
 		@Bean
-		//@ConfigurationProperties(prefix="spring.secondDatasource")
 		public DataSource dataSource() {
 			DataSource ds=DataSourceBuilder.create().driverClassName(dbDriver).url(dbURL).username(dbUser).password(dbPassword).build();
 			return ds;
@@ -64,13 +48,6 @@ public class Config  {
 		@Bean
 		public JpaVendorAdapter eclipseLink() {
 			EclipseLinkJpaVendorAdapter adapter = new EclipseLinkJpaVendorAdapter();
-			log.warn("####     Entity Manager Factory Interface:  "+adapter.getEntityManagerFactoryInterface());
-			log.warn("####     Entity Manager  Interface:  "+adapter.getEntityManagerInterface());
-			log.warn("####     JPA Dialect:  "+adapter.getJpaDialect());
-			log.warn("####     Persistence Provider:  "+adapter.getPersistenceProvider());
-			//log.warn("####     DataSource:  "+dataSource);
-			
-			
 			return adapter;
 		}
 
@@ -78,20 +55,15 @@ public class Config  {
 		public LocalContainerEntityManagerFactoryBean entityManagerFactory(JpaVendorAdapter adapter, DataSource dataSource) {
 			LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 			factory.setPackagesToScan("com.sap.aish.model");
-//			factory.setJpaVendorAdapter(adapter);
-//			factory.setDataSource(ds);
 			factory.setPersistenceUnitName("SpringBootJPAWithEclipseLink");
 			factory.setJpaVendorAdapter(eclipseLink());
 			factory.setDataSource(dataSource());
-			log.warn("######   "+factory+"    "+factory.getPersistenceUnitName());
 			return factory;
 		}
 
 		@Bean
 		@Autowired
 		public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-			log.warn("######  Entity Manager factory in Transaction Manager : "+emf);
-			
 			return new JpaTransactionManager(emf);
 		}
 	
